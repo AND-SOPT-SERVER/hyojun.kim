@@ -1,9 +1,13 @@
 package org.sopt.seminar1;
 
+import java.time.LocalDate;
+
 public class Diary {
 
-    private Long id;
+    private final Long id;
     private String body;
+
+
 
     public Diary(Long id, String body) {
         this.id = id;
@@ -14,6 +18,10 @@ public class Diary {
         return id;
     }
 
+
+    public void setBody(String body) {
+        this.body = body;
+    }
     public String getBody() {
         return body;
     }

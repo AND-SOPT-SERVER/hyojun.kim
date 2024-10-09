@@ -5,31 +5,28 @@ import org.sopt.seminar1.Main.UI.InvalidInputException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.IntStream;
 
 public class DiaryRepository {
     private static final int ID_INCREMENT_VALUE =1;
-    private final Map<Long, String> storage = new ConcurrentHashMap<>();
+    private final Map<Long, Diary> storage = new ConcurrentHashMap<>();
     private final AtomicLong numbering = new AtomicLong();
     private static List<Diary> trashStorage = new ArrayList<>();
 
 
 
-    void save(final Diary diary){
+    void save(final String body){
         final long id = numbering.addAndGet(ID_INCREMENT_VALUE);
-        storage.put(id, diary.getBody());
+        storage.put(id, new Diary(id, body));
     }
 
     List<Diary> findAll(){
         List<Diary> diaryList = new ArrayList<>();
 
         for(long index =1; index<=numbering.longValue(); index++){
-            final String body = storage.get(index);
-
-            if(body == null)
+            if(Objects.isNull(storage.get(index)))
                 continue;
 
-            diaryList.add(new Diary(index, body));
+            diaryList.add(storage.get(index));
         }
 
         return diaryList;
@@ -37,21 +34,23 @@ public class DiaryRepository {
 
     void patch(Long id, String body){
         isPresentDiary(id);
-        storage.put(id, body);
+        Diary diary = storage.get(id);
+        diary.setBody(body);
+        storage.put(id, diary);
     }
 
     void delete(Long id)
     {
         isPresentDiary(id);
-        trashStorage.add(new Diary(id, storage.get(id)));
+        trashStorage.add(storage.get(id));
         storage.remove(id, storage.get(id));
     }
 
     void restore(){
         for(int i=0; i<trashStorage.size(); i++){
-            String body = trashStorage.get(i).getBody();
+            Diary restoreDiary = trashStorage.get(i);
             Long id = trashStorage.get(i).getId();
-            storage.putIfAbsent(id, body);
+            storage.putIfAbsent(id, restoreDiary);
         }
         trashStorage.clear();
     }
