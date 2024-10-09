@@ -5,6 +5,7 @@ import org.sopt.seminar1.DiaryController;
 import java.io.*;
 
 public class Main {
+
     public static void main(String[] args) {
         final UI ui;
         try {
@@ -16,16 +17,20 @@ public class Main {
     }
 
     interface UI {
+
         void runRepeatedly() throws IOException;
 
         class UIException extends RuntimeException {
+
         }
 
         class InvalidInputException extends UIException {
+
         }
     }
 
     static class DiaryUI implements UI {
+
         private final DiaryController server;
         private String selected;
 
@@ -48,6 +53,8 @@ public class Main {
                     run();
                 } catch (InvalidInputException e) {
                     ConsoleIO.printLine("잘못된 값을 입력하였습니다.");
+                } catch (IllegalArgumentException e) {
+                    ConsoleIO.printLine(e.getMessage());
                 }
 
                 if (isFinished()) {
@@ -123,13 +130,13 @@ public class Main {
 
         private String getMenu() {
             return """
-                    ============================
-                    - GET : 일기 불러오기
-                    - POST : 일기 작성하기
-                    - DELETE : 일기 제거하기
-                    - PATCH : 일기 수정하기
-                    - RESTORE : 삭제된 일기 원상복구하기
-                    """;
+                ============================
+                - GET : 일기 불러오기
+                - POST : 일기 작성하기
+                - DELETE : 일기 제거하기
+                - PATCH : 일기 수정하기
+                - RESTORE : 삭제된 일기 원상복구하기
+                """;
 
         }
 
@@ -144,8 +151,11 @@ public class Main {
 
     // not thread safe
     private static class ConsoleIO {
-        private final static BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(System.out));
-        private final static BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        private final static BufferedWriter bufferedWriter = new BufferedWriter(
+            new OutputStreamWriter(System.out));
+        private final static BufferedReader bufferedReader = new BufferedReader(
+            new InputStreamReader(System.in));
         private final static StringBuilder sb = new StringBuilder();
 
         public static void printLine(final String toPrint) throws IOException {

@@ -9,10 +9,6 @@ public class DiaryController {
     private Status status = Status.READY;
     private final DiaryService diaryService = new DiaryService();
 
-    /**
-     * 과제는 put delete 까지 진행!
-     * @return
-     */
 
     Status getStatus() {
         return status;
