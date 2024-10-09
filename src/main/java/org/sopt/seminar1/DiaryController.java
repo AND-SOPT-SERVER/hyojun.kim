@@ -1,9 +1,11 @@
 package org.sopt.seminar1;
 
+import org.sopt.seminar1.Main.UI.InvalidInputException;
 
 import java.util.List;
 
 public class DiaryController {
+    private static final int MAX_LENGTH=30;
     private Status status = Status.READY;
     private final DiaryService diaryService = new DiaryService();
 
@@ -30,20 +32,37 @@ public class DiaryController {
     }
 
     final void post(final String body) {
-        try {
-            diaryService.save(body);
-        }catch (IllegalArgumentException e){
-            this.status = Status.ERROR;
-        }
+        validateBody(body);
+        diaryService.save(body);
     }
 
     final void delete(final String id) {
-        diaryService.delete(Long.parseLong(id));
+        try {
+            String trimmedInputId = id.trim();
+            diaryService.delete(Long.parseLong(trimmedInputId));
+        }catch (NumberFormatException e){
+            throw new InvalidInputException();
+        }
     }
 
     final void patch(final String id, final String body) {
-        diaryService.patch(Long.parseLong(id), body);
+        try {
+            validateBody(body);
+            String trimmedInputId = id.trim();
+            diaryService.patch(Long.parseLong(trimmedInputId), body);
+        }catch (NumberFormatException e){
+            throw new InvalidInputException();
+        }
     }
+
+
+    private void validateBody(String body) {
+        if(body.length() > MAX_LENGTH)
+            throw new InvalidInputException();
+        if(body.trim().isBlank())
+            throw new InvalidInputException();
+    }
+
 
     enum Status {
         READY,
