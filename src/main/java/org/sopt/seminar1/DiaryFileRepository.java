@@ -12,8 +12,12 @@ import org.sopt.seminar1.Main.UI.InvalidInputException;
 public class DiaryFileRepository implements DiaryRepository {
 
     private static final int ID_INCREMENT_VALUE = 1;
-    private final AtomicLong numbering = new AtomicLong();
+    private final AtomicLong numbering;
     private final DiaryFileAccessor diaryFileAccessor = new DiaryFileAccessor();
+
+    public DiaryFileRepository() {
+        numbering = new AtomicLong(diaryFileAccessor.readDiary().size());
+    }
 
     @Override
     public void save(String body) {
@@ -29,14 +33,12 @@ public class DiaryFileRepository implements DiaryRepository {
         List<Diary> diaryList = new ArrayList<>();
         ConcurrentMap<Long, Diary> storage = diaryFileAccessor.readDiary();
 
-        for (long index = 1; index <= numbering.longValue(); index++) {
+        for (long index = 1L; index <= numbering.longValue(); index++) {
             if (Objects.isNull(storage.get(index))) {
                 continue;
             }
-
             diaryList.add(storage.get(index));
         }
-
         return diaryList;
     }
 

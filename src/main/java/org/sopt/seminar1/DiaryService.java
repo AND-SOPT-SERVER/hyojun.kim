@@ -7,7 +7,7 @@ import java.util.List;
 public class DiaryService {
 
     private static final int LIMIT_MODIFY_COUNT = 2;
-    private final DiaryRepository diaryRepository = new DiaryRepository();
+    private final DiaryRepository diaryRepository = new DiaryFileRepository();
     private LocalDate nowDate = LocalDate.now();
     private int modifyCount = 0;
 
