@@ -55,6 +55,10 @@ public class DiaryController {
         }
     }
 
+    final void restore(){
+        diaryService.restore();
+    }
+
 
     private void validateBody(String body) {
         if(body.length() > MAX_LENGTH)

@@ -20,6 +20,10 @@ public class DiaryService {
         diaryRepository.patch(id, body);
     }
 
+    void restore(){
+        diaryRepository.restore();
+    }
+
     void delete(Long id){
         diaryRepository.delete(id);
     }
