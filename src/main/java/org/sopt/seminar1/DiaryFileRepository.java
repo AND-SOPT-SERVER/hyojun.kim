@@ -17,12 +17,12 @@ public class DiaryFileRepository implements DiaryRepository {
     private final DiaryFileAccessor diaryFileAccessor = new DiaryFileAccessor();
 
     public DiaryFileRepository() {
-        numbering = new AtomicLong(diaryFileAccessor.readDiary().size() + diaryFileAccessor.trashRead().size());
+        numbering = new AtomicLong(getReadDiary().size() + getReadTrashStorage().size());
     }
 
     @Override
     public void save(String body) {
-        ConcurrentMap<Long, Diary> storage = diaryFileAccessor.readDiary();
+        ConcurrentMap<Long, Diary> storage = getReadDiary();
         final long id = numbering.addAndGet(ID_INCREMENT_VALUE);
         storage.put(id, new Diary(id, body));
         List<Diary> diaryList = convertMapToList(storage);
@@ -32,7 +32,7 @@ public class DiaryFileRepository implements DiaryRepository {
     @Override
     public List<Diary> findAll() {
         List<Diary> diaryList = new ArrayList<>();
-        ConcurrentMap<Long, Diary> storage = diaryFileAccessor.readDiary();
+        ConcurrentMap<Long, Diary> storage = getReadDiary();
 
         for (long index = 1L; index <= numbering.longValue(); index++) {
             if (Objects.isNull(storage.get(index))) {
@@ -45,45 +45,65 @@ public class DiaryFileRepository implements DiaryRepository {
 
     @Override
     public void patch(Long id, String body, ModifyInfo modifyInfo) {
-        ConcurrentMap<Long, Diary> storage = diaryFileAccessor.readDiary();
+        ConcurrentMap<Long, Diary> storage = getReadDiary();
+
         isPresentDiary(storage, id);
+
         Diary diary = storage.get(id);
         diary.setBody(body);
         storage.put(id, diary);
+
         List<Diary> diaryList = convertMapToList(storage);
+
         modifyInfo.addModifyCount();
-        diaryFileAccessor.writeDiary(diaryList);
-        diaryFileAccessor.writeModifyInfo(modifyInfo);
+        writeToFile(modifyInfo, diaryList);
     }
+
 
 
 
     @Override
     public void restore() {
-        ConcurrentMap<Long, Diary> storage = diaryFileAccessor.readDiary();
-        List<Diary> trashStorage = diaryFileAccessor.trashRead();
+        ConcurrentMap<Long, Diary> storage = getReadDiary();
+        List<Diary> trashStorage = getReadTrashStorage();
+
         for(int i=0; i<trashStorage.size(); i++){
             Diary restoreDiary = trashStorage.get(i);
             Long id = trashStorage.get(i).getId();
             storage.putIfAbsent(id, restoreDiary);
         }
-        trashStorage.clear();
 
+        trashStorage.clear();
         diaryFileAccessor.clearTrash();
         diaryFileAccessor.writeDiary(convertMapToList(storage));
     }
 
+    private List<Diary> getReadTrashStorage() {
+        return diaryFileAccessor.trashRead();
+    }
+
     @Override
     public void delete(Long id) {
-        ConcurrentMap<Long, Diary> storage = diaryFileAccessor.readDiary();
-        List<Diary> trashStorage = diaryFileAccessor.trashRead();
+        ConcurrentMap<Long, Diary> storage = getReadDiary();
+        List<Diary> trashStorage = getReadTrashStorage();
         isPresentDiary(storage, id);
+
         trashStorage.add(storage.get(id));
         storage.remove(id, storage.get(id));
+
         diaryFileAccessor.writeDiary(convertMapToList(storage));
         diaryFileAccessor.trashWrite(trashStorage);
     }
 
+
+    private ConcurrentMap<Long, Diary> getReadDiary() {
+        return diaryFileAccessor.readDiary();
+    }
+
+    private void writeToFile(ModifyInfo modifyInfo, List<Diary> diaryList) {
+        diaryFileAccessor.writeDiary(diaryList);
+        diaryFileAccessor.writeModifyInfo(modifyInfo);
+    }
 
 
     public ModifyInfo getModifyInfo(){
