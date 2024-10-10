@@ -16,7 +16,7 @@ public class DiaryFileRepository implements DiaryRepository {
     private final DiaryFileAccessor diaryFileAccessor = new DiaryFileAccessor();
 
     public DiaryFileRepository() {
-        numbering = new AtomicLong(diaryFileAccessor.readDiary().size());
+        numbering = new AtomicLong(diaryFileAccessor.readDiary().size() + diaryFileAccessor.trashRead().size());
     }
 
     @Override
