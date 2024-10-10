@@ -1,5 +1,6 @@
 package org.sopt.seminar1;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,17 +44,18 @@ public class DiaryFileRepository implements DiaryRepository {
     }
 
     @Override
-    public void patch(Long id, String body) {
+    public void patch(Long id, String body, ModifyInfo modifyInfo) {
         ConcurrentMap<Long, Diary> storage = diaryFileAccessor.readDiary();
-
         isPresentDiary(storage, id);
         Diary diary = storage.get(id);
         diary.setBody(body);
         storage.put(id, diary);
         List<Diary> diaryList = convertMapToList(storage);
-
+        modifyInfo.addModifyCount();
         diaryFileAccessor.writeDiary(diaryList);
+        diaryFileAccessor.writeModifyInfo(modifyInfo);
     }
+
 
 
     @Override
@@ -81,6 +83,13 @@ public class DiaryFileRepository implements DiaryRepository {
         diaryFileAccessor.writeDiary(convertMapToList(storage));
         diaryFileAccessor.trashWrite(trashStorage);
     }
+
+
+
+    public ModifyInfo getModifyInfo(){
+        return diaryFileAccessor.readModifyInfo();
+    }
+
 
     private void isPresentDiary(Map<Long, Diary> storage, Long id) {
         if (storage.get(id) == null) {

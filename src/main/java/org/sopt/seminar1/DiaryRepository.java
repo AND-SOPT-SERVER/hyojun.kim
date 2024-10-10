@@ -1,5 +1,6 @@
 package org.sopt.seminar1;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface DiaryRepository {
@@ -7,10 +8,13 @@ public interface DiaryRepository {
 
     List<Diary> findAll();
 
-    void patch(final Long id, final String body);
-
     void restore();
 
     void delete(Long id);
+
+    ModifyInfo getModifyInfo();
+
+    void patch(Long id, String body, ModifyInfo modifyInfo);
+
 
 }

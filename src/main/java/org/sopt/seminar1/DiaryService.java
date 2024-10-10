@@ -8,46 +8,55 @@ public class DiaryService {
 
     private static final int LIMIT_MODIFY_COUNT = 2;
     private final DiaryRepository diaryRepository = new DiaryFileRepository();
-    private LocalDate nowDate = LocalDate.now();
-    private int modifyCount = 0;
+    private ModifyInfo modifyInfo = diaryRepository.getModifyInfo();
 
     void save(final String body) {
-        setByNewDate();
+        settingModifyInfo();
         diaryRepository.save(body);
     }
 
     List<Diary> findAll() {
+        settingModifyInfo();
         return diaryRepository.findAll();
     }
 
     void patch(final Long id, final String body) {
-        setByNewDate();
-        validateModifyCount();
-        diaryRepository.patch(id, body);
-        modifyCount++;
-    }
-
-    private void validateModifyCount() {
-        if (modifyCount >= LIMIT_MODIFY_COUNT) {
-            throw new IllegalArgumentException("수정은 최대 2회까지 가능합니다!");
-        }
-    }
-
-    private void setByNewDate() {
-        if (nowDate.isBefore(LocalDate.now())) {
-            nowDate = LocalDate.now();
-            modifyCount = 0;
-        }
+        settingModifyInfo();
+        validateModifyCount(modifyInfo);
+        diaryRepository.patch(id, body, modifyInfo);
     }
 
     void restore() {
-        setByNewDate();
+        settingModifyInfo();
         diaryRepository.restore();
     }
 
     void delete(Long id) {
-        setByNewDate();
+        settingModifyInfo();
         diaryRepository.delete(id);
+    }
+
+
+    private void settingModifyInfo() {
+        initModifyInfo();
+        setByNewDate(modifyInfo);
+    }
+
+    private void initModifyInfo(){
+        modifyInfo = diaryRepository.getModifyInfo();
+    }
+
+    private void validateModifyCount(ModifyInfo modifyInfo) {
+        if (modifyInfo.getModifyCount() >= LIMIT_MODIFY_COUNT) {
+            throw new IllegalArgumentException("수정은 최대 2회까지 가능합니다!");
+        }
+    }
+
+    private void setByNewDate(ModifyInfo modifyInfo) {
+        if (modifyInfo.getDate().isBefore(LocalDate.now())) {
+            modifyInfo.setDate(LocalDate.now());
+            modifyInfo.resetModifyCount();
+        }
     }
 
 
