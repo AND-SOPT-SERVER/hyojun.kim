@@ -18,6 +18,9 @@ public class DiaryFileAccessor {
     private static final String DIARY_FILE_NAME = "./src/main/java/org/sopt/seminar1/diary.txt";
     private static final String TRASH_FILE_NAME = "./src/main/java/org/sopt/seminar1/trash.txt";
     private static final String MODIFY_INFO_FILE_NAME = "./src/main/java/org/sopt/seminar1/modifyInfo.txt";
+    private static final String COLONE = ":";
+    private static final String DATE_SEPARATOR = "-";
+    private static final String NEW_LINE = "\n";
 
     public DiaryFileAccessor() {
         File diaryFile = new File(DIARY_FILE_NAME);
@@ -63,8 +66,7 @@ public class DiaryFileAccessor {
                 FileOutputStream fos = new FileOutputStream(MODIFY_INFO_FILE_NAME);
                 BufferedOutputStream bos = new BufferedOutputStream(fos);
         ) {
-            String str = modifyInfo.getDate().toString() +
-                    ":" +
+            String str = modifyInfo.getDate().toString() + COLONE +
                     modifyInfo.getModifyCount();
             bos.write(str.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
@@ -73,9 +75,9 @@ public class DiaryFileAccessor {
     }
 
     private ModifyInfo convertToModifyInfo(String line) {
-        String[] splitColone = line.split(":");
+        String[] splitColone = line.split(COLONE);
 
-        String[] splitLocalDate = splitColone[0].split("-");
+        String[] splitLocalDate = splitColone[0].split(DATE_SEPARATOR);
         int year = Integer.parseInt(splitLocalDate[0]);
         int month = Integer.parseInt(splitLocalDate[1]);
         int day = Integer.parseInt(splitLocalDate[2]);
@@ -106,7 +108,7 @@ public class DiaryFileAccessor {
     }
 
     private Diary convertToDiary(String s) {
-        String[] split = s.split(":");
+        String[] split = s.split(COLONE);
         String id = split[0];
         String body = split[1];
         return new Diary(Long.parseLong(id), body);
@@ -129,7 +131,7 @@ public class DiaryFileAccessor {
     private void writeByConvertedString(Diary diary, BufferedOutputStream bos) throws IOException {
         String id = diary.getId().toString();
         String body = diary.getBody();
-        String line = id + ":" + body + "\n";
+        String line = id + COLONE + body + NEW_LINE;
         bos.write(line.getBytes(StandardCharsets.UTF_8));
     }
 
