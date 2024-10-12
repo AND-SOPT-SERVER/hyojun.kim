@@ -5,14 +5,8 @@ import org.sopt.seminar1.Main.UI.InvalidInputException;
 import java.util.List;
 
 public class DiaryController {
-    private static final int MAX_LENGTH=30;
     private Status status = Status.READY;
     private final DiaryService diaryService = new DiaryService();
-
-    /**
-     * 과제는 put delete 까지 진행!
-     * @return
-     */
 
     Status getStatus() {
         return status;
@@ -32,35 +26,23 @@ public class DiaryController {
     }
 
     final void post(final String body) {
-        validateBody(body);
+        Validator.validateBody(body);
         diaryService.save(body);
     }
 
     final void delete(final String id) {
-        try {
-            String trimmedInputId = id.trim();
-            diaryService.delete(Long.parseLong(trimmedInputId));
-        }catch (NumberFormatException e){
-            throw new InvalidInputException();
-        }
+        String trimmedInputId = id.trim();
+        diaryService.delete(Parser.stringToLong(trimmedInputId));
     }
 
     final void patch(final String id, final String body) {
-        try {
-            validateBody(body);
-            String trimmedInputId = id.trim();
-            diaryService.patch(Long.parseLong(trimmedInputId), body);
-        }catch (NumberFormatException e){
-            throw new InvalidInputException();
-        }
+        Validator.validateBody(body);
+        String trimmedInputId = id.trim();
+        diaryService.patch(Parser.stringToLong(trimmedInputId), body);
     }
 
-
-    private void validateBody(String body) {
-        if(body.length() > MAX_LENGTH)
-            throw new InvalidInputException();
-        if(body.trim().isBlank())
-            throw new InvalidInputException();
+    final void restore() {
+        diaryService.restore();
     }
 
 
