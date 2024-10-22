@@ -57,9 +57,9 @@ public class DiaryServiceImpl implements DiaryService {
     @Override
     @Transactional
     public void deleteDiary(Long id) {
-        diaryRepository.findById(id)
+        DiaryEntity findDiaryEntity = diaryRepository.findById(id)
             .orElseThrow(() -> new NotFoundDiaryException(id));
 
-        diaryRepository.deleteById(id);
+        diaryRepository.delete(findDiaryEntity);
     }
 }
