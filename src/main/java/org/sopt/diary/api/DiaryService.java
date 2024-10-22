@@ -13,6 +13,6 @@ public interface DiaryService {
 
     void updateDiary(final Long id, final DiaryRequest diaryRequest);
 
-    Boolean deleteDiary(final Long id);
+    void deleteDiary(final Long id);
 }
 

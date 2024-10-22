@@ -56,7 +56,10 @@ public class DiaryServiceImpl implements DiaryService {
 
     @Override
     @Transactional
-    public Boolean deleteDiary(Long id) {
-        return null;
+    public void deleteDiary(Long id) {
+        diaryRepository.findById(id)
+            .orElseThrow(() -> new NotFoundDiaryException(id));
+
+        diaryRepository.deleteById(id);
     }
 }

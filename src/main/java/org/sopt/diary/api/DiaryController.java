@@ -6,6 +6,7 @@ import org.sopt.diary.service.Diary;
 import org.sopt.diary.service.DiaryServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,7 +55,15 @@ public class DiaryController {
         diaryService.updateDiary(diaryId, diaryRequest);
         return ResponseEntity.ok("Success to update diary");
     }
-    
+
+
+    @DeleteMapping("/{diaryId}")
+    public ResponseEntity<String> deleteDiary(@PathVariable final Long diaryId) {
+        requestValidator.validate(diaryId);
+        diaryService.deleteDiary(diaryId);
+        return ResponseEntity.ok("Success to delete diary");
+    }
+
 
 
 }
