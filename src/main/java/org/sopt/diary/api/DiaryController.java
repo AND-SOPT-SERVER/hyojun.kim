@@ -2,6 +2,7 @@ package org.sopt.diary.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.sopt.diary.api.validator.RequestValidator;
 import org.sopt.diary.service.Diary;
 import org.sopt.diary.service.DiaryServiceImpl;
 import org.springframework.http.HttpStatus;

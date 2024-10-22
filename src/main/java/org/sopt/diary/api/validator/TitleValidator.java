@@ -1,4 +1,4 @@
-package org.sopt.diary.api;
+package org.sopt.diary.api.validator;
 
 import java.util.Objects;
 import org.sopt.diary.exception.InputTitleExcpetion;
