@@ -36,7 +36,10 @@ public class DiaryEntity {
         return name;
     }
 
-
+    public void update(final String name, final String title){
+        this.name = name;
+        this.title = title;
+    }
 
 
 

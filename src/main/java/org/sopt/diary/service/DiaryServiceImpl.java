@@ -47,10 +47,11 @@ public class DiaryServiceImpl implements DiaryService {
 
     @Override
     @Transactional
-    public DiaryResponse updateDiary(Long id, DiaryRequest diaryRequest) {
+    public void updateDiary(Long id, DiaryRequest diaryRequest) {
+        DiaryEntity diaryEntity = diaryRepository.findById(id)
+            .orElseThrow(() -> new NotFoundDiaryException(id));
 
-
-        return null;
+        diaryEntity.update(diaryRequest.title(), diaryRequest.content());
     }
 
     @Override

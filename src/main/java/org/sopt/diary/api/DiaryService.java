@@ -11,7 +11,7 @@ public interface DiaryService {
 
     void createDiary(final DiaryRequest diaryRequest);
 
-    DiaryResponse updateDiary(final Long id, final DiaryRequest diaryRequest);
+    void updateDiary(final Long id, final DiaryRequest diaryRequest);
 
     Boolean deleteDiary(final Long id);
 }

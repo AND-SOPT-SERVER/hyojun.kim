@@ -7,8 +7,10 @@ import org.sopt.diary.service.DiaryServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,34 +18,43 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/diary")
 public class DiaryController {
 
-    private final DiaryServiceImpl diaryServiceImpl;
+    private final DiaryService diaryService;
     private final RequestValidator requestValidator;
 
-    public DiaryController(DiaryServiceImpl diaryServiceImpl, RequestValidator requestValidator) {
-        this.diaryServiceImpl = diaryServiceImpl;
+    public DiaryController(DiaryServiceImpl diaryService, RequestValidator requestValidator) {
+        this.diaryService = diaryService;
         this.requestValidator = requestValidator;
     }
 
     @PostMapping
     ResponseEntity<String> createDiary(DiaryRequest diaryRequest) {
         requestValidator.validate(diaryRequest);
-        diaryServiceImpl.createDiary(diaryRequest);
+        diaryService.createDiary(diaryRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body("Success to create diary");
     }
 
 
     @GetMapping
     ResponseEntity<DiaryListResponse> getDiaryList() {
-        List<DiaryResponse> findDiaryListBySortedId = diaryServiceImpl.findDiaryList();
+        List<DiaryResponse> findDiaryListBySortedId = diaryService.findDiaryList();
         return ResponseEntity.ok(DiaryListResponse.of(findDiaryListBySortedId));
     }
 
     @GetMapping("/{diaryId}")
     public ResponseEntity<DiaryResponse> getDiary(@PathVariable final Long diaryId) {
         requestValidator.validate(diaryId);
-        final Diary diary = diaryServiceImpl.findDiaryById(diaryId);
+        final Diary diary = diaryService.findDiaryById(diaryId);
         return ResponseEntity.ok(new DiaryResponse(diary.getId(), diary.getName()));
     }
+
+    @PatchMapping("/{diaryId}")
+    public ResponseEntity<String> updateDiary(@PathVariable final Long diaryId, @RequestBody DiaryRequest diaryRequest) {
+        requestValidator.validate(diaryId);
+        requestValidator.validate(diaryRequest);
+        diaryService.updateDiary(diaryId, diaryRequest);
+        return ResponseEntity.ok("Success to update diary");
+    }
+    
 
 
 }
