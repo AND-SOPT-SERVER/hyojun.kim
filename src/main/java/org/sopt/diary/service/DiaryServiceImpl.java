@@ -9,6 +9,7 @@ import org.sopt.diary.exception.NotFoundDiaryException;
 import org.sopt.diary.repository.DiaryEntity;
 import org.sopt.diary.repository.DiaryRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class DiaryServiceImpl implements DiaryService {
@@ -21,12 +22,14 @@ public class DiaryServiceImpl implements DiaryService {
 
 
     @Override
+    @Transactional
     public void createDiary(final DiaryRequest diaryRequest) {
         diaryRepository.save(new DiaryEntity(diaryRequest.title(), diaryRequest.content()));
     }
 
 
     @Override
+    @Transactional(readOnly = true)
     public List<DiaryResponse> findDiaryList() {
         return diaryRepository.findAll().stream()
             .map(Diary::of)
@@ -36,17 +39,22 @@ public class DiaryServiceImpl implements DiaryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Diary findDiaryById(Long id) {
         return Diary.from(
             diaryRepository.findById(id).orElseThrow(() -> new NotFoundDiaryException(id)));
     }
 
     @Override
+    @Transactional
     public DiaryResponse updateDiary(Long id, DiaryRequest diaryRequest) {
+
+
         return null;
     }
 
     @Override
+    @Transactional
     public Boolean deleteDiary(Long id) {
         return null;
     }
