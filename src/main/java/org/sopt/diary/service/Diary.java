@@ -15,6 +15,10 @@ public class Diary {
         return new Diary(diaryEntity.getId(), diaryEntity.getName());
     }
 
+    public static Diary from(DiaryEntity diaryEntity) {
+        return of(diaryEntity);
+    }
+
     public long getId() {
         return id;
     }

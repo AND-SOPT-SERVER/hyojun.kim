@@ -5,6 +5,7 @@ import java.util.List;
 import org.sopt.diary.api.DiaryRequest;
 import org.sopt.diary.api.DiaryResponse;
 import org.sopt.diary.api.DiaryService;
+import org.sopt.diary.exception.NotFoundDiaryException;
 import org.sopt.diary.repository.DiaryEntity;
 import org.sopt.diary.repository.DiaryRepository;
 import org.springframework.stereotype.Component;
@@ -36,7 +37,8 @@ public class DiaryServiceImpl implements DiaryService {
 
     @Override
     public Diary findDiaryById(Long id) {
-        return null;
+        return Diary.from(
+            diaryRepository.findById(id).orElseThrow(() -> new NotFoundDiaryException(id)));
     }
 
     @Override

@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
-
     @ExceptionHandler(ContentLengthException.class)
     public ResponseEntity<String> handleContentLengthException(final ContentLengthException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
@@ -16,6 +14,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InputTitleExcpetion.class)
     public ResponseEntity<String> handleContentLengthException(final InputTitleExcpetion e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(WrongIdException.class)
+    public ResponseEntity<String> handleWrongIdException(final WrongIdException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(NotFoundDiaryException.class)
+    public ResponseEntity<String> handleNotFoundDiaryException(final NotFoundDiaryException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 

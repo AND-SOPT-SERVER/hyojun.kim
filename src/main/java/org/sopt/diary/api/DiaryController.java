@@ -40,6 +40,7 @@ public class DiaryController {
 
     @GetMapping("/{diaryId}")
     public ResponseEntity<DiaryResponse> getDiary(@PathVariable final Long diaryId) {
+        requestValidator.validate(diaryId);
         final Diary diary = diaryServiceImpl.findDiaryById(diaryId);
         return ResponseEntity.ok(new DiaryResponse(diary.getId(), diary.getName()));
     }
