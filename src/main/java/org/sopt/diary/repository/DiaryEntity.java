@@ -12,13 +12,17 @@ public class DiaryEntity {
     public DiaryEntity(){
     }
 
-    public DiaryEntity(final String name){
+    public DiaryEntity(final String name, final String title){
+        this.title = title;
         this.name = name;
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
+
+    @Column
+    public String title;
 
     @Column
     public String name;

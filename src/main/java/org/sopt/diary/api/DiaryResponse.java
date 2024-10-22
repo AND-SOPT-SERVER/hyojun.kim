@@ -1,7 +1,7 @@
 package org.sopt.diary.api;
 
 public class DiaryResponse {
-    private final long id;
+    private final Long id;
     private final String name;
 
     public DiaryResponse(long id, String name) {
