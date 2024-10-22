@@ -1,6 +1,5 @@
 package org.sopt.diary.api;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.sopt.diary.api.validator.RequestValidator;
 import org.sopt.diary.service.Diary;
@@ -26,7 +25,7 @@ public class DiaryController {
     }
 
     @PostMapping
-    ResponseEntity<String> createDiary(DiaryRequest diaryRequest){
+    ResponseEntity<String> createDiary(DiaryRequest diaryRequest) {
         requestValidator.validate(diaryRequest);
         diaryServiceImpl.createDiary(diaryRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body("Success to create diary");
@@ -34,23 +33,16 @@ public class DiaryController {
 
 
     @GetMapping
-    ResponseEntity<DiaryListResponse> getDiaryList(){
-        List<Diary> diaryList = diaryServiceImpl.findDiaryList();
-
-        List<DiaryResponse> diaryResponseList = new ArrayList<>();
-        for(Diary diary : diaryList){
-            diaryResponseList.add(new DiaryResponse(diary.getId(), diary.getName()));
-        }
-        return ResponseEntity.ok(new DiaryListResponse(diaryResponseList));
+    ResponseEntity<DiaryListResponse> getDiaryList() {
+        List<DiaryResponse> findDiaryListBySortedId = diaryServiceImpl.findDiaryList();
+        return ResponseEntity.ok(DiaryListResponse.of(findDiaryListBySortedId));
     }
 
     @GetMapping("/{diaryId}")
-    public ResponseEntity<DiaryResponse> getDiary(@PathVariable final Long diaryId){
+    public ResponseEntity<DiaryResponse> getDiary(@PathVariable final Long diaryId) {
         final Diary diary = diaryServiceImpl.findDiaryById(diaryId);
         return ResponseEntity.ok(new DiaryResponse(diary.getId(), diary.getName()));
     }
-
-
 
 
 }

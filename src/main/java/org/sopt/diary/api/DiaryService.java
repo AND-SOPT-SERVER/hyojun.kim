@@ -5,9 +5,9 @@ import org.sopt.diary.service.Diary;
 
 public interface DiaryService {
 
-    List<Diary> findDiaryList();
+    List<DiaryResponse> findDiaryList();
 
-    DiaryResponse findDiaryById(final Long id);
+    Diary findDiaryById(final Long id);
 
     void createDiary(final DiaryRequest diaryRequest);
 

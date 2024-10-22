@@ -1,5 +1,7 @@
 package org.sopt.diary.service;
 
+import org.sopt.diary.repository.DiaryEntity;
+
 public class Diary {
     private final long id;
     private final String name;
@@ -7,6 +9,10 @@ public class Diary {
     public Diary(long id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public static Diary of(DiaryEntity diaryEntity) {
+        return new Diary(diaryEntity.getId(), diaryEntity.getName());
     }
 
     public long getId() {

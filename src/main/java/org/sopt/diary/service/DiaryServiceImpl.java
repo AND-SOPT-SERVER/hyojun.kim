@@ -1,6 +1,6 @@
 package org.sopt.diary.service;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import org.sopt.diary.api.DiaryRequest;
 import org.sopt.diary.api.DiaryResponse;
@@ -20,19 +20,18 @@ public class DiaryServiceImpl implements DiaryService {
 
 
     @Override
-    public void createDiary(final DiaryRequest diaryRequest){
+    public void createDiary(final DiaryRequest diaryRequest) {
         diaryRepository.save(new DiaryEntity(diaryRequest.title(), diaryRequest.content()));
     }
 
 
     @Override
-    public List<Diary> findDiaryList(){
-        final List<DiaryEntity> diaryEntityList = diaryRepository.findAll();
-        final List<Diary> diaryList = new ArrayList<>();
-        for(DiaryEntity diaryEntity : diaryEntityList){
-            diaryList.add(new Diary(diaryEntity.getId(), diaryEntity.getName()));
-        }
-        return diaryList;
+    public List<DiaryResponse> findDiaryList() {
+        return diaryRepository.findAll().stream()
+            .map(Diary::of)
+            .map(DiaryResponse::of)
+            .sorted(Comparator.comparing(DiaryResponse::id))
+            .toList();
     }
 
     @Override
@@ -44,6 +43,7 @@ public class DiaryServiceImpl implements DiaryService {
     public DiaryResponse updateDiary(Long id, DiaryRequest diaryRequest) {
         return null;
     }
+
     @Override
     public Boolean deleteDiary(Long id) {
         return null;
