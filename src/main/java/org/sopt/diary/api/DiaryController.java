@@ -41,6 +41,8 @@ public class DiaryController {
         return ResponseEntity.ok(DiaryListResponse.of(findDiaryListBySortedId));
     }
 
+
+
     @GetMapping("/{diaryId}")
     public ResponseEntity<DetailDiaryResponse> getDiary(@PathVariable final Long diaryId) {
         requestValidator.validate(diaryId);
