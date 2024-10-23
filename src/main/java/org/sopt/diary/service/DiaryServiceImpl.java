@@ -15,16 +15,26 @@ import org.springframework.transaction.annotation.Transactional;
 public class DiaryServiceImpl implements DiaryService {
 
     private final DiaryRepository diaryRepository;
+    private final DateTimeUtil dateTimeUtil;
+    private final WriteTimeChecker writeTimeChecker;
 
-    public DiaryServiceImpl(DiaryRepository diaryRepository) {
+
+    public DiaryServiceImpl(DiaryRepository diaryRepository, DateTimeUtil dateTimeUtil,
+        WriteTimeChecker writeTimeChecker) {
         this.diaryRepository = diaryRepository;
+        this.dateTimeUtil = dateTimeUtil;
+        this.writeTimeChecker = writeTimeChecker;
     }
-
 
     @Override
     @Transactional
     public void createDiary(final DiaryRequest diaryRequest) {
-        diaryRepository.save(new DiaryEntity(diaryRequest.title(), diaryRequest.content()));
+        diaryRepository.findLastDiary()
+            .ifPresent(lastDiary -> writeTimeChecker.isValidTimeToWriteDiary(Diary.of(lastDiary)));
+
+        diaryRepository.save(
+            DiaryEntity.of(diaryRequest.title(), diaryRequest.content(), dateTimeUtil.nowTime()
+            ));
     }
 
 

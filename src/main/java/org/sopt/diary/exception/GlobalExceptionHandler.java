@@ -27,4 +27,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
+    @ExceptionHandler(WriteTimeShortException.class)
+    public ResponseEntity<String> handleWriteTimeShortException(final WriteTimeShortException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
 }

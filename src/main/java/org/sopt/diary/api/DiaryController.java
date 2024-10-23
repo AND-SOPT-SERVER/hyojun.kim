@@ -28,7 +28,7 @@ public class DiaryController {
     }
 
     @PostMapping
-    ResponseEntity<String> createDiary(DiaryRequest diaryRequest) {
+    ResponseEntity<String> createDiary(@RequestBody DiaryRequest diaryRequest) {
         requestValidator.validate(diaryRequest);
         diaryService.createDiary(diaryRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body("Success to create diary");
@@ -45,7 +45,7 @@ public class DiaryController {
     public ResponseEntity<DiaryResponse> getDiary(@PathVariable final Long diaryId) {
         requestValidator.validate(diaryId);
         final Diary diary = diaryService.findDiaryById(diaryId);
-        return ResponseEntity.ok(new DiaryResponse(diary.getId(), diary.getName()));
+        return ResponseEntity.ok(new DiaryResponse(diary.getId(), diary.getContent()));
     }
 
     @PatchMapping("/{diaryId}")
