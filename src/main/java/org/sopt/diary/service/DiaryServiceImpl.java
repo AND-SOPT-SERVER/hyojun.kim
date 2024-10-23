@@ -44,7 +44,8 @@ public class DiaryServiceImpl implements DiaryService {
         return diaryRepository.findAll().stream()
             .map(Diary::of)
             .map(SimpleDiaryResponse::of)
-            .sorted(Comparator.comparing(SimpleDiaryResponse::id))
+            .sorted(Comparator.comparing(SimpleDiaryResponse::id).reversed())
+            .limit(10)
             .toList();
     }
 
