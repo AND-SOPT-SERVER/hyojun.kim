@@ -37,15 +37,15 @@ public class DiaryController {
 
     @GetMapping
     ResponseEntity<DiaryListResponse> getDiaryList() {
-        List<DiaryResponse> findDiaryListBySortedId = diaryService.findDiaryList();
+        List<SimpleDiaryResponse> findDiaryListBySortedId = diaryService.findDiaryList();
         return ResponseEntity.ok(DiaryListResponse.of(findDiaryListBySortedId));
     }
 
     @GetMapping("/{diaryId}")
-    public ResponseEntity<DiaryResponse> getDiary(@PathVariable final Long diaryId) {
+    public ResponseEntity<DetailDiaryResponse> getDiary(@PathVariable final Long diaryId) {
         requestValidator.validate(diaryId);
         final Diary diary = diaryService.findDiaryById(diaryId);
-        return ResponseEntity.ok(new DiaryResponse(diary.getId(), diary.getContent()));
+        return ResponseEntity.ok(DetailDiaryResponse.of(diary));
     }
 
     @PatchMapping("/{diaryId}")

@@ -3,7 +3,7 @@ package org.sopt.diary.service;
 import java.util.Comparator;
 import java.util.List;
 import org.sopt.diary.api.DiaryRequest;
-import org.sopt.diary.api.DiaryResponse;
+import org.sopt.diary.api.SimpleDiaryResponse;
 import org.sopt.diary.api.DiaryService;
 import org.sopt.diary.exception.NotFoundDiaryException;
 import org.sopt.diary.repository.DiaryEntity;
@@ -40,11 +40,11 @@ public class DiaryServiceImpl implements DiaryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<DiaryResponse> findDiaryList() {
+    public List<SimpleDiaryResponse> findDiaryList() {
         return diaryRepository.findAll().stream()
             .map(Diary::of)
-            .map(DiaryResponse::of)
-            .sorted(Comparator.comparing(DiaryResponse::id))
+            .map(SimpleDiaryResponse::of)
+            .sorted(Comparator.comparing(SimpleDiaryResponse::id))
             .toList();
     }
 
