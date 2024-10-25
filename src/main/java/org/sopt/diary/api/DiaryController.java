@@ -1,7 +1,7 @@
 package org.sopt.diary.api;
 
 import java.util.List;
-import org.sopt.diary.api.validator.RequestValidator;
+import org.sopt.diary.util.validator.RequestValidator;
 import org.sopt.diary.service.Diary;
 import org.sopt.diary.service.DiaryServiceImpl;
 import org.springframework.http.HttpStatus;
@@ -52,8 +52,7 @@ public class DiaryController {
 
     @PatchMapping("/{diaryId}")
     public ResponseEntity<String> updateDiary(@PathVariable final Long diaryId, @RequestBody DiaryRequest diaryRequest) {
-        requestValidator.validate(diaryId);
-        requestValidator.validate(diaryRequest);
+        requestValidator.validateUpdateRequest(diaryId, diaryRequest);
         diaryService.updateDiary(diaryId, diaryRequest);
         return ResponseEntity.ok("Success to update diary");
     }
