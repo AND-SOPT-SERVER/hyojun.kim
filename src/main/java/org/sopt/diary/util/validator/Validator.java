@@ -1,4 +1,4 @@
-package org.sopt.diary.api.validator;
+package org.sopt.diary.util.validator;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

@@ -1,6 +1,5 @@
-package org.sopt.diary.api;
+package org.sopt.diary.util.validator;
 
-import org.sopt.diary.api.validator.Validator;
 import org.sopt.diary.exception.ContentLengthException;
 
 @Validator

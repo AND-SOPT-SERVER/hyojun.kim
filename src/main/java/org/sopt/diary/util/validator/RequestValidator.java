@@ -1,7 +1,6 @@
-package org.sopt.diary.api.validator;
+package org.sopt.diary.util.validator;
 
 
-import org.sopt.diary.api.ContentValidator;
 import org.sopt.diary.api.DiaryRequest;
 
 @Validator
@@ -25,6 +24,12 @@ public class RequestValidator{
 
     public void validate(final Long id) {
         idValidator.validate(id);
+    }
+
+    public void validateUpdateRequest(final Long id, final DiaryRequest request) {
+        idValidator.validate(id);
+        titleValidator.validate(request.title());
+        contentValidator.validate(request.content());
     }
 
 }
