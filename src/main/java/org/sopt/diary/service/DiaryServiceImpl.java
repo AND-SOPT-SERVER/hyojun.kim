@@ -1,10 +1,14 @@
 package org.sopt.diary.service;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.sopt.diary.api.DiaryRequest;
 import org.sopt.diary.api.SimpleDiaryResponse;
 import org.sopt.diary.api.DiaryService;
+import org.sopt.diary.util.validator.TitleValidator;
+import org.sopt.diary.exception.InputTitleExcpetion;
 import org.sopt.diary.exception.NotFoundDiaryException;
 import org.sopt.diary.repository.DiaryEntity;
 import org.sopt.diary.repository.DiaryRepository;
@@ -17,14 +21,18 @@ public class DiaryServiceImpl implements DiaryService {
     private final DiaryRepository diaryRepository;
     private final DateTimeUtil dateTimeUtil;
     private final WriteTimeChecker writeTimeChecker;
+    private final TitleValidator titleValidator;
 
 
     public DiaryServiceImpl(DiaryRepository diaryRepository, DateTimeUtil dateTimeUtil,
-        WriteTimeChecker writeTimeChecker) {
+        WriteTimeChecker writeTimeChecker, TitleValidator titleValidator) {
         this.diaryRepository = diaryRepository;
         this.dateTimeUtil = dateTimeUtil;
         this.writeTimeChecker = writeTimeChecker;
+        this.titleValidator = titleValidator;
     }
+
+
 
     @Override
     @Transactional
