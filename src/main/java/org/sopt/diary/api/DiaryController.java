@@ -1,6 +1,7 @@
 package org.sopt.diary.api;
 
 import java.util.List;
+import org.sopt.diary.repository.constant.Category;
 import org.sopt.diary.util.validator.RequestValidator;
 import org.sopt.diary.service.Diary;
 import org.sopt.diary.service.DiaryServiceImpl;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/diary")
+@RequestMapping("/api")
 public class DiaryController {
 
     private final DiaryService diaryService;
@@ -27,30 +28,36 @@ public class DiaryController {
         this.requestValidator = requestValidator;
     }
 
-    @PostMapping
+    @PostMapping("/diary")
     ResponseEntity<String> createDiary(@RequestBody DiaryRequest diaryRequest) {
         requestValidator.validate(diaryRequest);
         diaryService.createDiary(diaryRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body("Success to create diary");
     }
 
-
-    @GetMapping
+    @GetMapping("/diaries")
     ResponseEntity<DiaryListResponse> getDiaryList() {
         List<SimpleDiaryResponse> findDiaryListBySortedId = diaryService.findDiaryList();
         return ResponseEntity.ok(DiaryListResponse.of(findDiaryListBySortedId));
     }
 
 
+    @GetMapping("/diaries/{category}")
+    ResponseEntity<DiaryListResponse> getDiaryListByCategory(@PathVariable final Category category) {
+        List<SimpleDiaryResponse> findDiaryListBySortedId = diaryService.findDiaryListByCategory(category);
+        return ResponseEntity.ok(DiaryListResponse.of(findDiaryListBySortedId));
+    }
 
-    @GetMapping("/{diaryId}")
+
+
+    @GetMapping("/diary/{diaryId}")
     public ResponseEntity<DetailDiaryResponse> getDiary(@PathVariable final Long diaryId) {
         requestValidator.validate(diaryId);
         final Diary diary = diaryService.findDiaryById(diaryId);
         return ResponseEntity.ok(DetailDiaryResponse.of(diary));
     }
 
-    @PatchMapping("/{diaryId}")
+    @PatchMapping("/diary/{diaryId}")
     public ResponseEntity<String> updateDiary(@PathVariable final Long diaryId, @RequestBody DiaryRequest diaryRequest) {
         requestValidator.validateUpdateRequest(diaryId, diaryRequest);
         diaryService.updateDiary(diaryId, diaryRequest);
@@ -58,7 +65,7 @@ public class DiaryController {
     }
 
 
-    @DeleteMapping("/{diaryId}")
+    @DeleteMapping("/diary/{diaryId}")
     public ResponseEntity<String> deleteDiary(@PathVariable final Long diaryId) {
         requestValidator.validate(diaryId);
         diaryService.deleteDiary(diaryId);

@@ -1,6 +1,7 @@
 package org.sopt.diary.exception;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -37,5 +38,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException e) {
         return ResponseEntity.badRequest().body("Invalid Parameter Type");
     }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> handleHttpMessageNotReadableException(final HttpMessageNotReadableException e) {
+        return ResponseEntity.badRequest().body("Not Variable Input Text");
+    }
+
 
 }

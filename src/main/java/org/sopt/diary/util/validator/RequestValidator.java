@@ -7,18 +7,18 @@ import org.sopt.diary.api.DiaryRequest;
 public class RequestValidator{
 
     private final IdValidator idValidator;
-    private final TitleValidator titleValidator;
+    private final CachedTitleValidator cachedTitleValidator;
     private final ContentValidator contentValidator;
 
-    public RequestValidator(IdValidator idValidator, TitleValidator titleValidator,
+    public RequestValidator(IdValidator idValidator, CachedTitleValidator cachedTitleValidator,
         ContentValidator contentValidator) {
         this.idValidator = idValidator;
-        this.titleValidator = titleValidator;
+        this.cachedTitleValidator = cachedTitleValidator;
         this.contentValidator = contentValidator;
     }
 
     public void validate(final DiaryRequest request) {
-        titleValidator.validate(request.title());
+        cachedTitleValidator.validate(request.title());
         contentValidator.validate(request.content()); // client 가 요청을 잘못 보낸 경우! 400 에러 뱉을 수 있도록 유도
     }
 
@@ -28,7 +28,7 @@ public class RequestValidator{
 
     public void validateUpdateRequest(final Long id, final DiaryRequest request) {
         idValidator.validate(id);
-        titleValidator.validate(request.title());
+        cachedTitleValidator.validate(request.title());
         contentValidator.validate(request.content());
     }
 
