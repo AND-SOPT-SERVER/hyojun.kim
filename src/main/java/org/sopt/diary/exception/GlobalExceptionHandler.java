@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(WriteTimeShortException.class)
     public ResponseEntity<String> handleWriteTimeShortException(final WriteTimeShortException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
+        return ResponseEntity.status(429).body(e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
