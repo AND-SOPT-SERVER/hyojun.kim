@@ -2,7 +2,7 @@ package org.sopt.diary.api;
 
 import java.time.LocalDateTime;
 import org.sopt.diary.repository.constant.Category;
-import org.sopt.diary.service.Diary;
+import org.sopt.diary.domain.Diary;
 
 public record DetailDiaryResponse(Long id, String title, String content, LocalDateTime createdAt, Category category) {
 
