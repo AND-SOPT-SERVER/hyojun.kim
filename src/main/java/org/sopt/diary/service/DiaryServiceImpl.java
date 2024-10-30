@@ -4,8 +4,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import org.sopt.diary.api.DiaryRequest;
-import org.sopt.diary.api.SimpleDiaryResponse;
+import org.sopt.diary.api.CommonDiaryResponse;
 import org.sopt.diary.api.DiaryService;
+import org.sopt.diary.api.MyDiaryResponse;
+import org.sopt.diary.repository.UserRepository;
+import org.sopt.diary.util.constant.Sort;
+import org.sopt.diary.domain.Diary;
 import org.sopt.diary.exception.InputTitleExcpetion;
 import org.sopt.diary.exception.NotFoundDiaryException;
 import org.sopt.diary.repository.DiaryEntity;
@@ -51,25 +55,120 @@ public class DiaryServiceImpl implements DiaryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<SimpleDiaryResponse> findDiaryList() {
+    public List<CommonDiaryResponse> findDiaryList(Sort sort) {
         return diaryRepository.findAll().stream()
             .map(Diary::of)
             .sorted(Comparator.comparing(Diary::getCreatedAt).reversed())
-            .map(SimpleDiaryResponse::of)
+            .map(CommonDiaryResponse::of)
             .limit(10)
             .toList();
     }
 
     @Override
-    public List<SimpleDiaryResponse> findDiaryListByCategory(Category category) {
-        return diaryRepository.findDiaryEntitiesByCategory(category)
-            .stream()
+    @Transactional(readOnly = true)
+    public List<MyDiaryResponse> findMyDiaryList(Long userId, Sort sort) {
+        if(sort == Sort.CREATED)
+            return getMyDiaryResponsesSortedByCreatedAt(userId);
+        if(sort == Sort.LENGTH)
+            return getMyDiaryResponsesSortedByLength(userId);
+
+        return getMyDiaryResponsesSortedByLength(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MyDiaryResponse> findMyDiaryListByCategory(Long userId, Category category,
+        Sort sort) {
+        if(sort == Sort.CREATED)
+            return getMyDiaryResponsesCategoryAndSortedByCreatedAt(userId, category);
+        if(sort == Sort.LENGTH)
+            return getMyDiaryResponsesCategorySortedByLength(userId, category);
+
+        throw new IllegalArgumentException("Invalid sort type");
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CommonDiaryResponse> findDiaryListByCategory(Category category,
+        Sort sort) {
+        if(sort == Sort.CREATED)
+            return getDiaryResponsesCategoryAndSortedByCreatedAt(category);
+        if(sort == Sort.LENGTH)
+            return getDiaryResponsesCategorySortedByLength(category);
+
+        return List.of();
+    }
+
+    private List<CommonDiaryResponse> getDiaryResponsesCategorySortedByLength(Category category) {
+        return diaryRepository.findDiaryEntitiesByCategory(category).stream()
             .map(Diary::of)
-            .sorted(Comparator.comparing(Diary::getCreatedAt).reversed())
-            .map(SimpleDiaryResponse::of)
+            .sorted(Comparator.comparing(Diary::getContentLength).reversed())
+            .map(CommonDiaryResponse::of)
             .limit(10)
             .toList();
     }
+
+    private List<CommonDiaryResponse> getDiaryResponsesCategoryAndSortedByCreatedAt(
+        Category category) {
+        return diaryRepository.findDiaryEntitiesByCategory(category).stream()
+            .map(Diary::of)
+            .sorted(Comparator.comparing(Diary::getCreatedAt).reversed())
+            .map(CommonDiaryResponse::of)
+            .limit(10)
+            .toList();
+    }
+
+
+    private List<MyDiaryResponse> getMyDiaryResponsesCategorySortedByLength(Long userId,
+        Category category) {
+        return diaryRepository.findDiaryEntitiesByUserIdAndCategory(userId,category).stream()
+            .map(Diary::of)
+            .sorted(Comparator.comparing(Diary::getContentLength).reversed())
+            .map(MyDiaryResponse::of)
+            .limit(10)
+            .toList();
+    }
+
+    private List<MyDiaryResponse> getMyDiaryResponsesCategoryAndSortedByCreatedAt(Long userId,
+        Category category) {
+        return diaryRepository.findDiaryEntitiesByUserIdAndCategory(userId,category).stream()
+            .map(Diary::of)
+            .sorted(Comparator.comparing(Diary::getCreatedAt).reversed())
+            .map(MyDiaryResponse::of)
+            .limit(10)
+            .toList();
+    }
+
+
+
+    private List<MyDiaryResponse> getMyDiaryResponsesSortedByCreatedAt(Long userId) {
+        return diaryRepository.findAllByUser(userId).stream()
+            .map(Diary::of)
+            .sorted(Comparator.comparing(Diary::getCreatedAt).reversed())
+            .map(MyDiaryResponse::of)
+            .limit(10)
+            .toList();
+    }
+
+    private List<MyDiaryResponse> getMyDiaryResponsesSortedByLength(Long userId) {
+        return diaryRepository.findAllByUser(userId).stream()
+            .map(Diary::of)
+            .sorted(Comparator.comparing(Diary::getContentLength).reversed())
+            .map(MyDiaryResponse::of)
+            .limit(10)
+            .toList();
+    }
+
+//    @Override
+//    public List<CommonDiaryResponse> findDiaryListByCategory(Category category) {
+//        return diaryRepository.findDiaryEntitiesByCategory(category)
+//            .stream()
+//            .map(Diary::of)
+//            .sorted(Comparator.comparing(Diary::getCreatedAt).reversed())
+//            .map(CommonDiaryResponse::of)
+//            .limit(10)
+//            .toList();
+//    }
 
     @Override
     @Transactional(readOnly = true)

@@ -2,13 +2,18 @@ package org.sopt.diary.api;
 
 import java.util.List;
 import org.sopt.diary.repository.constant.Category;
-import org.sopt.diary.service.Diary;
+import org.sopt.diary.domain.Diary;
+import org.sopt.diary.util.constant.Sort;
 
 public interface DiaryService {
 
-    List<SimpleDiaryResponse> findDiaryList();
+    List<CommonDiaryResponse> findDiaryList(Sort sort);
 
-    List<SimpleDiaryResponse> findDiaryListByCategory(final Category category);
+    List<MyDiaryResponse> findMyDiaryList(Long userId, Sort sort);
+
+    List<CommonDiaryResponse> findDiaryListByCategory(final Category category, final Sort sort);
+
+    List<MyDiaryResponse> findMyDiaryListByCategory(final Long userId, final Category category, final Sort sort);
 
     Diary findDiaryById(final Long id);
 

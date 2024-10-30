@@ -2,14 +2,14 @@ package org.sopt.diary.api;
 
 import java.util.List;
 
-public record DiaryListResponse(List<SimpleDiaryResponse> diaryList) {
+public record DiaryListResponse(List<CommonDiaryResponse> diaryList) {
 
-    public static DiaryListResponse of(final List<SimpleDiaryResponse> diaryList) {
+    public static DiaryListResponse of(final List<CommonDiaryResponse> diaryList) {
         return new DiaryListResponse(diaryList);
     }
 
 
-    public List<SimpleDiaryResponse> getDiaryList() {
+    public List<CommonDiaryResponse> getDiaryList() {
         return diaryList;
     }
 }
