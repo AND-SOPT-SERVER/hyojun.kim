@@ -1,5 +1,6 @@
 package org.sopt.diary.repository;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,10 +9,9 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.springframework.data.annotation.CreatedDate;
 
 @Entity
-@Table(name = "sopt_member")
+@Table(name = "user")
 public class UserEntity {
 
     public UserEntity() {
@@ -21,6 +21,7 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String userName;
 
     private String password;
@@ -28,15 +29,14 @@ public class UserEntity {
     @OneToMany(mappedBy = "userEntity")
     private List<DiaryEntity> diaryEntities;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
+   private String nickname;
 
     public UserEntity(String userName, String password, List<DiaryEntity> list,
-        LocalDateTime createdAt) {
+        String nickname) {
         this.userName = userName;
         this.password = password;
         this.diaryEntities = list;
-        this.createdAt = createdAt;
+        this.nickname = nickname;
     }
 
 
@@ -56,7 +56,7 @@ public class UserEntity {
         return diaryEntities;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public String getNickname() {
+        return nickname;
     }
 }

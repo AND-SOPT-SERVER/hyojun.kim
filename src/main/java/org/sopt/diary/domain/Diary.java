@@ -2,7 +2,6 @@ package org.sopt.diary.domain;
 
 import java.time.LocalDateTime;
 import org.sopt.diary.repository.DiaryEntity;
-import org.sopt.diary.repository.UserEntity;
 import org.sopt.diary.repository.constant.Category;
 
 public class Diary {
@@ -11,24 +10,28 @@ public class Diary {
     private final String title;
     private final String content;
     private final User user;
-    private final LocalDateTime createdAt;
+    private final LocalDateTime date;
     private final Category category;
+    private final boolean isVisible;
 
-    public Diary(long id, String title, String content, LocalDateTime createdAt,
-        Category category, User user) {
+
+    public Diary(long id, String title, String content, LocalDateTime date,
+        Category category, User user, boolean isVisible) {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.createdAt = createdAt;
+        this.date = date;
         this.category = category;
         this.user = user;
+        this.isVisible = isVisible;
     }
 
 
 
     public static Diary of(DiaryEntity diaryEntity) {
         return new Diary(diaryEntity.getId(), diaryEntity.getTitle(), diaryEntity.getContent(),
-            diaryEntity.getCreatedAt(), diaryEntity.getCategory(), User.from(diaryEntity.getUserEntity()));
+            diaryEntity.getDate(), diaryEntity.getCategory(), User.from(diaryEntity.getUserEntity()),
+            diaryEntity.getVisible());
     }
 
     public static Diary from(DiaryEntity diaryEntity) {
@@ -40,7 +43,7 @@ public class Diary {
     }
 
     public LocalDateTime getCreatedAt() {
-        return createdAt;
+        return date;
     }
 
     public long getId() {
@@ -63,18 +66,28 @@ public class Diary {
         return user;
     }
 
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public boolean getIsVisible() {
+        return isVisible;
+    }
+
     @Override
     public String toString() {
         return "Diary{" +
             "id=" + id +
             ", title='" + title + '\'' +
             ", content='" + content + '\'' +
-            ", createdAt=" + createdAt +
+            ", user=" + user +
+            ", date=" + date +
             ", category=" + category +
+            ", isVisible=" + isVisible +
             '}';
     }
 
     public static DiaryEntity toEntity(Diary diary) {
-        return new DiaryEntity(diary.getTitle(), diary.getContent(), diary.getCreatedAt(), diary.getCategory());
+        return new DiaryEntity(diary.getTitle(), diary.getContent(), diary.getCreatedAt(), diary.getCategory(), diary.getIsVisible());
     }
 }

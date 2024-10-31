@@ -12,10 +12,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.ColumnDefault;
 import org.sopt.diary.repository.constant.Category;
 
 @Entity
-@Table(name = "DIARY")
+@Table(name = "diary")
 public class DiaryEntity {
 
     public DiaryEntity(){
@@ -40,26 +41,30 @@ public class DiaryEntity {
     private UserEntity userEntity;
 
     @Column
-    private LocalDateTime createdAt;
+    private LocalDateTime date;
 
-    public DiaryEntity(String content, String title, LocalDateTime createdAt, Category category) {
+    @ColumnDefault("true")
+    private Boolean isVisible = true;
+
+    public DiaryEntity(String content, String title, LocalDateTime date, Category category, Boolean isVisible) {
         this.title = title;
         this.content = content;
-        this.createdAt = createdAt;
+        this.date = date;
         this.category = category;
+        this.isVisible = isVisible;
     }
 
 
     public static DiaryEntity of( final String title, final String content, final LocalDateTime createdAt, final Category category){
-        return new DiaryEntity(content, title, createdAt, category);
+        return new DiaryEntity(content, title, createdAt, category, true);
     }
 
     public String getTitle() {
         return title;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public LocalDateTime getDate() {
+        return date;
     }
 
     public String getContent() {
@@ -76,6 +81,10 @@ public class DiaryEntity {
 
     public UserEntity getUserEntity() {
         return userEntity;
+    }
+
+    public Boolean getVisible() {
+        return isVisible;
     }
 
     public void update(final String title, final String content){

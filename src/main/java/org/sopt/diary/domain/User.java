@@ -13,25 +13,24 @@ public class User {
 
     private List<Diary> diaryEntities;
 
-    private LocalDateTime createdAt;
-
+    private String nickname;
 
     public User(String userName, String password, List<Diary> diaryEntities,
-        LocalDateTime createdAt) {
+        String nickname) {
         this.userName = userName;
         this.password = password;
         this.diaryEntities = diaryEntities;
-        this.createdAt = createdAt;
+        this.nickname = nickname;
     }
 
     public static User from(UserEntity userEntity) {
         return new User(userEntity.getUserName(), userEntity.getPassword(), userEntity.getDiaryEntities().stream().map(Diary::of).toList(),
-            userEntity.getCreatedAt());
+            userEntity.getNickname());
     }
 
     public static UserEntity toEntity(User user){
         return new UserEntity(user.getUserName(), user.getPassword(), user.getDiaryEntities().stream().map(Diary::toEntity).toList(),
-            user.getCreatedAt());
+            user.getNickname());
 
     }
 
@@ -47,7 +46,7 @@ public class User {
         return diaryEntities;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public String getNickname() {
+        return nickname;
     }
 }
