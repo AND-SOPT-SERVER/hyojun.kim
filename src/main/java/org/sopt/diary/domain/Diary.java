@@ -29,6 +29,7 @@ public class Diary {
 
 
     public static Diary of(DiaryEntity diaryEntity) {
+
         return new Diary(diaryEntity.getId(), diaryEntity.getTitle(), diaryEntity.getContent(),
             diaryEntity.getDate(), diaryEntity.getCategory(), User.from(diaryEntity.getUserEntity()),
             diaryEntity.getVisible());
@@ -74,18 +75,6 @@ public class Diary {
         return isVisible;
     }
 
-    @Override
-    public String toString() {
-        return "Diary{" +
-            "id=" + id +
-            ", title='" + title + '\'' +
-            ", content='" + content + '\'' +
-            ", user=" + user +
-            ", date=" + date +
-            ", category=" + category +
-            ", isVisible=" + isVisible +
-            '}';
-    }
 
     public static DiaryEntity toEntity(Diary diary) {
         return new DiaryEntity(diary.getTitle(), diary.getContent(), diary.getCreatedAt(), diary.getCategory(), diary.getIsVisible());

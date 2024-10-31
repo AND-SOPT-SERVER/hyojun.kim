@@ -1,7 +1,7 @@
 package org.sopt.diary.util.validator;
 
 
-import org.sopt.diary.api.DiaryRequest;
+import org.sopt.diary.api.request.DiaryRequest;
 
 @Validator
 public class RequestValidator{

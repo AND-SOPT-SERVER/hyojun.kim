@@ -1,7 +1,7 @@
 package org.sopt.diary.service;
 
 import java.util.Optional;
-import org.sopt.diary.api.UserRequest;
+import org.sopt.diary.api.request.UserRequest;
 import org.sopt.diary.api.UserService;
 import org.sopt.diary.repository.UserEntity;
 import org.sopt.diary.repository.UserRepository;

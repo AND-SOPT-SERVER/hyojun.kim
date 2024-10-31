@@ -1,5 +1,6 @@
 package org.sopt.diary.repository;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -22,20 +22,19 @@ public class UserEntity {
     private Long id;
 
     @Column(unique = true)
-    private String userName;
+    private String username;
 
     private String password;
 
-    @OneToMany(mappedBy = "userEntity")
+    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.REMOVE)
     private List<DiaryEntity> diaryEntities;
 
    private String nickname;
 
-    public UserEntity(String userName, String password, List<DiaryEntity> list,
+    public UserEntity(String username, String password,
         String nickname) {
-        this.userName = userName;
+        this.username = username;
         this.password = password;
-        this.diaryEntities = list;
         this.nickname = nickname;
     }
 
@@ -44,8 +43,8 @@ public class UserEntity {
         return id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
     public String getPassword() {

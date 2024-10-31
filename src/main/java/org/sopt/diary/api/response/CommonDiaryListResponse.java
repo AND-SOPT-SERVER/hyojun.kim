@@ -1,4 +1,4 @@
-package org.sopt.diary.api;
+package org.sopt.diary.api.response;
 
 import java.util.List;
 

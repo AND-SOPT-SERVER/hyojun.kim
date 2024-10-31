@@ -1,4 +1,4 @@
-package org.sopt.diary.api;
+package org.sopt.diary.api.request;
 
 public record UserRequest(String username, String password) {
 

@@ -1,4 +1,4 @@
-package org.sopt.diary.api;
+package org.sopt.diary.api.request;
 
 
 public record DiaryRequest(String title, String username,String content, String category) {

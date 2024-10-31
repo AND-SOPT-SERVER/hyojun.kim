@@ -3,11 +3,10 @@ package org.sopt.diary.service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import org.sopt.diary.api.DiaryRequest;
-import org.sopt.diary.api.CommonDiaryResponse;
+import org.sopt.diary.api.request.DiaryRequest;
+import org.sopt.diary.api.response.CommonDiaryResponse;
 import org.sopt.diary.api.DiaryService;
-import org.sopt.diary.api.MyDiaryResponse;
-import org.sopt.diary.repository.UserRepository;
+import org.sopt.diary.api.response.MyDiaryResponse;
 import org.sopt.diary.util.constant.Sort;
 import org.sopt.diary.domain.Diary;
 import org.sopt.diary.exception.InputTitleExcpetion;
@@ -57,6 +56,7 @@ public class DiaryServiceImpl implements DiaryService {
     @Transactional(readOnly = true)
     public List<CommonDiaryResponse> findDiaryList(Sort sort) {
         return diaryRepository.findAll().stream()
+            .filter(DiaryEntity::getVisible)
             .map(Diary::of)
             .sorted(Comparator.comparing(Diary::getCreatedAt).reversed())
             .map(CommonDiaryResponse::of)

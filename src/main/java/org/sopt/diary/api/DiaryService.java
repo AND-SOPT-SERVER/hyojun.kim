@@ -1,6 +1,9 @@
 package org.sopt.diary.api;
 
 import java.util.List;
+import org.sopt.diary.api.request.DiaryRequest;
+import org.sopt.diary.api.response.CommonDiaryResponse;
+import org.sopt.diary.api.response.MyDiaryResponse;
 import org.sopt.diary.repository.constant.Category;
 import org.sopt.diary.domain.Diary;
 import org.sopt.diary.util.constant.Sort;
