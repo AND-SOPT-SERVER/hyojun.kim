@@ -1,7 +1,6 @@
-package org.sopt.diary.api;
+package org.sopt.diary.api.response;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import org.sopt.diary.repository.constant.Category;
 import org.sopt.diary.domain.Diary;
 
