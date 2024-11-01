@@ -3,6 +3,7 @@ package org.sopt.diary.service;
 import java.util.Optional;
 import org.sopt.diary.api.request.UserRequest;
 import org.sopt.diary.api.UserService;
+import org.sopt.diary.exception.NotFoundUserException;
 import org.sopt.diary.repository.UserEntity;
 import org.sopt.diary.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -27,8 +28,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserEntity> findUserByUsername(String username) {
-        return Optional.empty();
+    public UserEntity findUserByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new NotFoundUserException(username));
+    }
+
+    @Override
+    public UserEntity findById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException(userId));
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.sopt.diary.api.request.DiaryRequest;
 import org.sopt.diary.api.response.CommonDiaryResponse;
 import org.sopt.diary.api.DiaryService;
 import org.sopt.diary.api.response.MyDiaryResponse;
+import org.sopt.diary.repository.UserEntity;
 import org.sopt.diary.util.constant.Sort;
 import org.sopt.diary.domain.Diary;
 import org.sopt.diary.exception.InputTitleExcpetion;
@@ -35,7 +36,7 @@ public class DiaryServiceImpl implements DiaryService {
 
     @Override
     @Transactional
-    public void createDiary(final DiaryRequest diaryRequest) {
+    public void createDiary(final DiaryRequest diaryRequest, final UserEntity userEntity) {
         diaryRepository.findLastDiary()
             .ifPresent(lastDiary -> writeTimeChecker.isValidTimeToWriteDiary(Diary.of(lastDiary)));
 
@@ -44,7 +45,7 @@ public class DiaryServiceImpl implements DiaryService {
         try {
             diaryRepository.save(
                 DiaryEntity.of(diaryRequest.title(), diaryRequest.content(), dateTimeUtil.nowTime(),
-                    category
+                    category, userEntity
                 ));
         }catch (DataIntegrityViolationException e){
             throw new InputTitleExcpetion();
@@ -158,17 +159,6 @@ public class DiaryServiceImpl implements DiaryService {
             .limit(10)
             .toList();
     }
-
-//    @Override
-//    public List<CommonDiaryResponse> findDiaryListByCategory(Category category) {
-//        return diaryRepository.findDiaryEntitiesByCategory(category)
-//            .stream()
-//            .map(Diary::of)
-//            .sorted(Comparator.comparing(Diary::getCreatedAt).reversed())
-//            .map(CommonDiaryResponse::of)
-//            .limit(10)
-//            .toList();
-//    }
 
     @Override
     @Transactional(readOnly = true)

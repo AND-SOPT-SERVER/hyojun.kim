@@ -10,7 +10,9 @@ public interface UserService {
 
     void signIn(final UserRequest userRequest);
 
-    Optional<UserEntity> findUserByUsername(final String username);
+    UserEntity findUserByUsername(final String username);
+
+    UserEntity findById(final Long userId);
 
     boolean isExistUser(Long userId);
 }

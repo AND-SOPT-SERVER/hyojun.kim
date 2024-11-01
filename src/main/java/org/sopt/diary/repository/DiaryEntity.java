@@ -54,9 +54,18 @@ public class DiaryEntity {
         this.isVisible = isVisible;
     }
 
+    public DiaryEntity(String content, String title, LocalDateTime date, Category category, Boolean isVisible, UserEntity userEntity) {
+        this.title = title;
+        this.content = content;
+        this.date = date;
+        this.category = category;
+        this.isVisible = isVisible;
+        this.userEntity = userEntity;
+    }
 
-    public static DiaryEntity of( final String title, final String content, final LocalDateTime createdAt, final Category category){
-        return new DiaryEntity(content, title, createdAt, category, true);
+
+    public static DiaryEntity of( final String title, final String content, final LocalDateTime createdAt, final Category category, final UserEntity userEntity){
+        return new DiaryEntity(content, title, createdAt, category, true, userEntity);
     }
 
     public String getTitle() {
