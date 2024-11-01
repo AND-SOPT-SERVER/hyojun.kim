@@ -73,7 +73,7 @@ public class DiaryServiceImpl implements DiaryService {
         if(sort == Sort.LENGTH)
             return getMyDiaryResponsesSortedByLength(userId);
 
-        return getMyDiaryResponsesSortedByLength(userId);
+        return getMyDiaryResponsesSortedByCreatedAt(userId);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class DiaryServiceImpl implements DiaryService {
         if(sort == Sort.LENGTH)
             return getMyDiaryResponsesCategorySortedByLength(userId, category);
 
-        throw new IllegalArgumentException("Invalid sort type");
+        return getMyDiaryResponsesCategoryAndSortedByCreatedAt(userId, category);
     }
 
     @Override
