@@ -11,6 +11,7 @@ import org.sopt.diary.api.response.MyDiaryListResponse;
 import org.sopt.diary.api.response.MyDiaryResponse;
 import org.sopt.diary.domain.Diary;
 import org.sopt.diary.exception.NotFoundUserException;
+import org.sopt.diary.repository.UserEntity;
 import org.sopt.diary.repository.constant.Category;
 import org.sopt.diary.service.DiaryServiceImpl;
 import org.sopt.diary.util.LongParser;
@@ -44,9 +45,14 @@ public class DiaryController {
     }
 
     @PostMapping("/diary")
-    ResponseEntity<String> createDiary(@RequestBody DiaryRequest diaryRequest) {
+    ResponseEntity<String> createDiary(@RequestBody DiaryRequest diaryRequest, HttpServletRequest req) {
+        String userId = req.getHeader("userId");
+        Long parsedUserId = LongParser.parse(userId);
+        if(!userService.isExistUser(parsedUserId))
+            throw new NotFoundUserException(parsedUserId);
         requestValidator.validate(diaryRequest);
-        diaryService.createDiary(diaryRequest);
+        UserEntity userByUsername = userService.findById(parsedUserId);
+        diaryService.createDiary(diaryRequest, userByUsername);
         return ResponseEntity.status(HttpStatus.CREATED).body("Success to create diary");
     }
 
