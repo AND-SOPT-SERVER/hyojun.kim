@@ -9,6 +9,7 @@ public record DiaryListResponse(List<CommonDiaryResponse> diaryList) {
     }
 
 
+
     public List<CommonDiaryResponse> getDiaryList() {
         return diaryList;
     }

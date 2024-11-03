@@ -30,6 +30,10 @@ public class User {
 
     }
 
+    public static User of(String username, String password, String nickname) {
+        return new User(username, password, nickname);
+    }
+
     public String getUserName() {
         return userName;
     }

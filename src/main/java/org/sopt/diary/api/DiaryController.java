@@ -10,7 +10,9 @@ import org.sopt.diary.api.response.DiaryListResponse;
 import org.sopt.diary.api.response.MyDiaryListResponse;
 import org.sopt.diary.api.response.MyDiaryResponse;
 import org.sopt.diary.domain.Diary;
+import org.sopt.diary.domain.User;
 import org.sopt.diary.exception.NotFoundUserException;
+import org.sopt.diary.exception.WrongUserAccessException;
 import org.sopt.diary.repository.UserEntity;
 import org.sopt.diary.repository.constant.Category;
 import org.sopt.diary.service.DiaryServiceImpl;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class DiaryController {
 
+    private static final String USERID_HEADER = "userId";
     private final DiaryService diaryService;
     private final UserService userService;
     private final RequestValidator requestValidator;
@@ -46,7 +49,7 @@ public class DiaryController {
 
     @PostMapping("/diary")
     ResponseEntity<String> createDiary(@RequestBody DiaryRequest diaryRequest, HttpServletRequest req) {
-        String userId = req.getHeader("userId");
+        String userId = req.getHeader(USERID_HEADER);
         Long parsedUserId = LongParser.parse(userId);
         if(!userService.isExistUser(parsedUserId))
             throw new NotFoundUserException(parsedUserId);
@@ -57,40 +60,25 @@ public class DiaryController {
     }
 
     @GetMapping("/diaries")
-    ResponseEntity<CommonDiaryListResponse> getDiaryList(@RequestParam final Sort sort) {
-
-        List<CommonDiaryResponse> findDiaryListBySortedId = diaryService.findDiaryList(sort);
-
+    ResponseEntity<CommonDiaryListResponse> getDiaryListByCategory(
+        @RequestParam(required = false) final Category category, @RequestParam(required = false) final Sort sort) {
+        List<CommonDiaryResponse> findDiaryListBySortedId = diaryService.findDiaryListByCategory(
+            category, sort);
         return ResponseEntity.ok(CommonDiaryListResponse.of(findDiaryListBySortedId));
     }
 
-    @GetMapping("/diaries/my")
-    ResponseEntity<MyDiaryListResponse> getMyDiaryList(HttpServletRequest req,
-        @RequestParam final Sort sort) {
-        String userId = req.getHeader("userId");
+    @GetMapping("/diaries/me")
+    ResponseEntity<MyDiaryListResponse> getMyDiaryListByCategory(
+        @RequestParam(required = false) final Category category, @RequestParam(required = false) final Sort sort
+    , HttpServletRequest req) {
+        String userId = req.getHeader(USERID_HEADER);
         Long parsedUserId = LongParser.parse(userId);
-        if (!userService.isExistUser(parsedUserId)) {
+        if(!userService.isExistUser(parsedUserId))
             throw new NotFoundUserException(parsedUserId);
-        }
-        List<MyDiaryResponse> myDiaryList = diaryService.findMyDiaryList(parsedUserId, sort);
-        return ResponseEntity.ok(MyDiaryListResponse.of(myDiaryList));
-    }
 
-
-    @GetMapping("/diaries/{category}")
-    ResponseEntity<DiaryListResponse> getDiaryListByCategory(
-        @PathVariable final Category category, @RequestParam final Sort sort) {
-        List<CommonDiaryResponse> findDiaryListBySortedId = diaryService.findDiaryListByCategory(
+        List<MyDiaryResponse> findDiaryListBySortedId = diaryService.findMyDiaryListByCategory(parsedUserId,
             category, sort);
-        return ResponseEntity.ok(DiaryListResponse.of(findDiaryListBySortedId));
-    }
-
-    @GetMapping("/diaries/my/{category}")
-    ResponseEntity<DiaryListResponse> getMyDiaryListByCategory(
-        @PathVariable final Category category, @RequestParam final Sort sort) {
-        List<CommonDiaryResponse> findDiaryListBySortedId = diaryService.findDiaryListByCategory(
-            category, sort);
-        return ResponseEntity.ok(DiaryListResponse.of(findDiaryListBySortedId));
+        return ResponseEntity.ok(MyDiaryListResponse.of(findDiaryListBySortedId));
     }
 
 
@@ -101,18 +89,34 @@ public class DiaryController {
         return ResponseEntity.ok(DetailDiaryResponse.of(diary));
     }
 
-    @PatchMapping("/diary/{diaryId}")
+    @PatchMapping("/diary/{diaryId}") // userId 관련해서 넣기
     public ResponseEntity<String> updateDiary(@PathVariable final Long diaryId,
-        @RequestBody DiaryRequest diaryRequest) {
+        @RequestBody DiaryRequest diaryRequest, HttpServletRequest req) {
+        String userId = req.getHeader(USERID_HEADER);
+        Long parsedUserId = LongParser.parse(userId);
+        if(!userService.isExistUser(parsedUserId))
+            throw new NotFoundUserException(parsedUserId);
         requestValidator.validateUpdateRequest(diaryId, diaryRequest);
+        Diary diaryById = diaryService.findDiaryById(diaryId);
+        User byId = User.from(userService.findById(parsedUserId));
+        if(!diaryById.getUser().getNickname().equals(byId.getNickname()))
+            throw new WrongUserAccessException();
         diaryService.updateDiary(diaryId, diaryRequest);
         return ResponseEntity.ok("Success to update diary");
     }
 
 
-    @DeleteMapping("/diary/{diaryId}")
-    public ResponseEntity<String> deleteDiary(@PathVariable final Long diaryId) {
+    @DeleteMapping("/diary/{diaryId}") // userId 관련해서 넣기
+    public ResponseEntity<String> deleteDiary(@PathVariable final Long diaryId, HttpServletRequest req) {
+        String userId = req.getHeader(USERID_HEADER);
+        Long parsedUserId = LongParser.parse(userId);
+        if(!userService.isExistUser(parsedUserId))
+            throw new NotFoundUserException(parsedUserId);
         requestValidator.validate(diaryId);
+        Diary diaryById = diaryService.findDiaryById(diaryId);
+        User byId = User.from(userService.findById(parsedUserId));
+        if(!diaryById.getUser().getNickname().equals(byId.getNickname()))
+            throw new WrongUserAccessException();
         diaryService.deleteDiary(diaryId);
         return ResponseEntity.ok("Success to delete diary");
     }

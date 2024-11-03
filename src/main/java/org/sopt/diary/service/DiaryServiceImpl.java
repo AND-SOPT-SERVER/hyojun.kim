@@ -34,6 +34,8 @@ public class DiaryServiceImpl implements DiaryService {
         this.writeTimeChecker = writeTimeChecker;
     }
 
+
+
     @Override
     @Transactional
     public void createDiary(final DiaryRequest diaryRequest, final UserEntity userEntity) {
@@ -53,13 +55,37 @@ public class DiaryServiceImpl implements DiaryService {
     }
 
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<CommonDiaryResponse> findDiaryList(Sort sort) {
+   private List<CommonDiaryResponse> findDiaryList(Sort sort) {
+        if(sort == Sort.CREATED)
+            return getDiaryResponsesSortedByCreatedAt();
+        if(sort == Sort.LENGTH)
+            return getDiaryResponsesSortedByLength();
+
+
         return diaryRepository.findAll().stream()
             .filter(DiaryEntity::getVisible)
             .map(Diary::of)
             .sorted(Comparator.comparing(Diary::getCreatedAt).reversed())
+            .map(CommonDiaryResponse::of)
+            .limit(10)
+            .toList();
+    }
+
+    private List<CommonDiaryResponse> getDiaryResponsesSortedByCreatedAt() {
+        return diaryRepository.findAll().stream()
+            .filter(DiaryEntity::getVisible)
+            .map(Diary::of)
+            .sorted(Comparator.comparing(Diary::getCreatedAt).reversed())
+            .map(CommonDiaryResponse::of)
+            .limit(10)
+            .toList();
+    }
+
+    private List<CommonDiaryResponse> getDiaryResponsesSortedByLength() {
+        return diaryRepository.findAll().stream()
+            .filter(DiaryEntity::getVisible)
+            .map(Diary::of)
+            .sorted(Comparator.comparing(Diary::getContentLength).reversed())
             .map(CommonDiaryResponse::of)
             .limit(10)
             .toList();
@@ -92,12 +118,45 @@ public class DiaryServiceImpl implements DiaryService {
     @Transactional(readOnly = true)
     public List<CommonDiaryResponse> findDiaryListByCategory(Category category,
         Sort sort) {
+        if(Objects.isNull(category) && Objects.nonNull(sort)){
+            return findDiaryList(sort);
+        }
+        else if(Objects.isNull(sort)){
+            return findDiaryList(category);
+        }
+        else if(Objects.nonNull(category) && Objects.nonNull(sort)){
+            return findDiaryList(category, sort);
+        }
+
+        return findDefaultDiaryList();
+    }
+
+    private List<CommonDiaryResponse> findDiaryList(Category category, Sort sort) {
         if(sort == Sort.CREATED)
             return getDiaryResponsesCategoryAndSortedByCreatedAt(category);
         if(sort == Sort.LENGTH)
             return getDiaryResponsesCategorySortedByLength(category);
+        return getDiaryResponsesCategoryAndSortedByCreatedAt(category);
+    }
 
-        return List.of();
+    private List<CommonDiaryResponse> findDefaultDiaryList() {
+        return diaryRepository.findAll()
+            .stream()
+            .filter(DiaryEntity::getVisible)
+            .sorted(Comparator.comparing(DiaryEntity::getDate).reversed())
+            .limit(10)
+            .map(Diary::of)
+            .map(CommonDiaryResponse::of)
+            .toList();
+    }
+
+    private List<CommonDiaryResponse> findDiaryList(Category category) {
+        return diaryRepository.findDiaryEntitiesByCategory(category).stream()
+            .map(Diary::of)
+            .sorted(Comparator.comparing(Diary::getCreatedAt).reversed())
+            .map(CommonDiaryResponse::of)
+            .limit(10)
+            .toList();
     }
 
     private List<CommonDiaryResponse> getDiaryResponsesCategorySortedByLength(Category category) {
@@ -112,6 +171,7 @@ public class DiaryServiceImpl implements DiaryService {
     private List<CommonDiaryResponse> getDiaryResponsesCategoryAndSortedByCreatedAt(
         Category category) {
         return diaryRepository.findDiaryEntitiesByCategory(category).stream()
+            .filter(DiaryEntity::getVisible)
             .map(Diary::of)
             .sorted(Comparator.comparing(Diary::getCreatedAt).reversed())
             .map(CommonDiaryResponse::of)
@@ -189,4 +249,6 @@ public class DiaryServiceImpl implements DiaryService {
 
         diaryRepository.delete(findDiaryEntity);
     }
+
+
 }

@@ -11,7 +11,6 @@ import org.sopt.diary.util.constant.Sort;
 
 public interface DiaryService {
 
-    List<CommonDiaryResponse> findDiaryList(Sort sort);
 
     List<MyDiaryResponse> findMyDiaryList(Long userId, Sort sort);
 
