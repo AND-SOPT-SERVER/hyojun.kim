@@ -15,4 +15,10 @@ public interface DiaryRepository extends JpaRepository<DiaryEntity, Long> {
 
     List<DiaryEntity> findDiaryEntitiesByCategory(Category category);
 
+    @Query(value = "SELECT * FROM diary WHERE user_id = :userId AND category = :category", nativeQuery = true)
+    List<DiaryEntity> findDiaryEntitiesByUserIdAndCategory(Long userId, Category category);
+
+
+    @Query(value = "SELECT * FROM diary WHERE user_id = :userId", nativeQuery = true)
+    List<DiaryEntity> findAllByUser(Long userId);
 }

@@ -8,7 +8,7 @@ public class ContentValidator {
     private static final int MAX_CONTENT_LENGTH = 30;
 
     public void validate(final String content) {
-        if(content.length() > MAX_CONTENT_LENGTH)
+        if(content.length() > MAX_CONTENT_LENGTH || content.isEmpty())
             throw new ContentLengthException();
     }
 

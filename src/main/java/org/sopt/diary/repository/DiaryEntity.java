@@ -4,15 +4,19 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.ColumnDefault;
 import org.sopt.diary.repository.constant.Category;
 
 @Entity
-@Table(name = "DIARY")
+@Table(name = "diary")
 public class DiaryEntity {
 
     public DiaryEntity(){
@@ -32,27 +36,44 @@ public class DiaryEntity {
     @Enumerated(value = EnumType.STRING)
     private Category category;
 
-    @Column
-    private LocalDateTime createdAt;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntity userEntity;
 
-    public DiaryEntity(String content, String title, LocalDateTime createdAt, Category category) {
+    @Column
+    private LocalDateTime date;
+
+    @ColumnDefault("true")
+    private Boolean isVisible = true;
+
+    public DiaryEntity(String content, String title, LocalDateTime date, Category category, Boolean isVisible) {
         this.title = title;
         this.content = content;
-        this.createdAt = createdAt;
+        this.date = date;
         this.category = category;
+        this.isVisible = isVisible;
+    }
+
+    public DiaryEntity(String content, String title, LocalDateTime date, Category category, Boolean isVisible, UserEntity userEntity) {
+        this.title = title;
+        this.content = content;
+        this.date = date;
+        this.category = category;
+        this.isVisible = isVisible;
+        this.userEntity = userEntity;
     }
 
 
-    public static DiaryEntity of( final String title, final String content, final LocalDateTime createdAt, final Category category){
-        return new DiaryEntity(content, title, createdAt, category);
+    public static DiaryEntity of( final String title, final String content, final LocalDateTime createdAt, final Category category, final UserEntity userEntity){
+        return new DiaryEntity(content, title, createdAt, category, true, userEntity);
     }
 
     public String getTitle() {
         return title;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public LocalDateTime getDate() {
+        return date;
     }
 
     public String getContent() {
@@ -67,10 +88,20 @@ public class DiaryEntity {
         return category;
     }
 
+    public UserEntity getUserEntity() {
+        return userEntity;
+    }
+
+    public Boolean getVisible() {
+        return isVisible;
+    }
+
     public void update(final String title, final String content){
         this.title = title;
         this.content = content;
     }
+
+
 
     public void update(final String title, final String content, final Category category){
         this.title = title;
